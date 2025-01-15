@@ -1,1 +1,6 @@
-data
+# Ignore files inside of inter and processed dir
+data/inter/*.*
+data/processed/*.*
+wandb/*
+
+src/tracking/__pycache__
