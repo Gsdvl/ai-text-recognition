@@ -1,6 +1,6 @@
 # Ignore files inside of inter and processed dir
 data/inter/*.*
 data/processed/*.*
-wandb/*
-
-src/tracking/__pycache__
+notebooks/wandb/
+notebooks/__pycache__
+venv/
