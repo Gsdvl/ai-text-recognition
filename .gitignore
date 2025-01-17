@@ -1,4 +1,7 @@
 llm-proper-data
 llm-detect-data
 static
+static/llm-detect-ai-generated-text-zip
+llm-proper-data-zip
+results
 .vscode
