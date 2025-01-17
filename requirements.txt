@@ -7,3 +7,4 @@ kaggle
 requests
 scikit-learn
 spacy
+gradio
