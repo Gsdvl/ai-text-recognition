@@ -1,10 +1,15 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras import optimizers
 from sklearn.model_selection import train_test_split
+from types import SimpleNamespace
 import argparse, os
 import numpy as np
 import pandas as pd
+import wandb
+import params
+
 
 def get_data():
     #TODO CRIAR A FUNÇÃO QUE BAIXA OS DADOS DO WANDB
@@ -18,19 +23,31 @@ def vectorize_data(data):
 
 def create_model():
     model = Sequential([
-        Dense(64, activation='relu', input_shape=(5000,)),
-        Dense(32, activation='relu'),
-        Dense(32, activation='relu'),
+        Dense(128, activation='relu', input_shape=(5000,)),
+        Dense(64, activation='relu'),
+        Dense(64, activation='relu'),
         Dense(1, activation='sigmoid') 
     ])
 
-    model.compile(optimizer='adam',
+    my_optimizer = optimizers.Adam(learning_rate=model_configs.lr, beta_1=model_configs.beta_1, beta_2=model_configs.beta_2)
+
+    model.compile(optimizer=my_optimizer,
                 loss='categorical_crossentropy',
                 metrics=['accuracy'])
+    
 
     model.summary()
     return model
 
+def train_model():
+    df = get_data()
+
+    X_Tfidf = vectorize_data(df['clean_text'])
+    X_train, X_test, y_train, y_test = train_test_split(X_Tfidf, df['label'], test_size=0.2, random_state=42)
+    model = create_model()
+
+    model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=model_configs.epochs, batch_size=model_configs.batch_size)
+    #model.save('../results/model.keras')
 
 model_configs = SimpleNamespace(
     lr=0.001,
@@ -63,12 +80,7 @@ def parse_args():
 if __name__ == "__main__":
     parse_args()
     run = wandb.init(project=params.WANDB_PROJECT, entity=params.ENTITY, job_type="training")
-    train_generator, validation_generator = generate_train()
-    model = create_model()
-    train_model(model, train_generator, validation_generator)
-    run.link_model(path="model.keras", registered_model_name="flower_classifier_besthparams")
+    train_model()
+    run.link_model(path="model.keras", registered_model_name="#ESCOLHER NOME#")
     run.finish()
     wandb.finish()
-
-
-compile_model()
