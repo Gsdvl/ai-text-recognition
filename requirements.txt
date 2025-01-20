@@ -10,4 +10,6 @@ spacy
 gradio
 tensorflow
 argparse
+transformers
+torch
 
