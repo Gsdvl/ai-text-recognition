@@ -7,7 +7,7 @@ kaggle
 requests
 scikit-learn
 spacy
-<<<<<<< HEAD
-=======
 gradio
->>>>>>> 6200e74cc34ab1f0018a74a0dbb2bd2508d4bfef
+tensorflow
+argparse
+
