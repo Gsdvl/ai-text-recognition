@@ -1,20 +1,42 @@
-name: Sync to Hugging Face hub
+name: Transfer Model
+
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+    paths:
+      - "models/model.pkl"
 
 jobs:
-  sync-to-hub:
+  transfer_model:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Add remote 
-        env:
-          HF: ${{ secrets.HF }}
-        run: git remote add space https://lucasncortez:$HF@huggingface.co/spaces/LucasNCortez/ai-text-recognition-mlops-dl-ufrn
-      - name: Push to hub
-        env:
-          HF: ${{ secrets.HF }}
-        run: git push --force https://lucasncortez:$HF@huggingface.co/spaces/LucasNCortez/ai-text-recognition-mlops-dl-ufrn main
+      - name: Checkout Source Repository
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_REPO_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Clone Target Repository
+        run: |
+          git clone git@github.com:LucasNCortez/deploy-ai-text-recognition.git target-repo
+          cd target-repo
+          mkdir -p models
+
+      - name: Copy Model File
+        run: |
+          cp models/model.pkl target-repo/models/
+
+      - name: Commit and Push Changes
+        run: |
+          cd target-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add models/model.pkl
+          git commit -m "Update model"
+          git push origin main
