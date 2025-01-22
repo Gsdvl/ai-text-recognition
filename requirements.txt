@@ -12,4 +12,5 @@ tensorflow
 argparse
 transformers
 torch
+seaborn
 

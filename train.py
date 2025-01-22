@@ -32,7 +32,7 @@ def create_model():
     my_optimizer = optimizers.Adam(learning_rate=model_configs.lr, beta_1=model_configs.beta_1, beta_2=model_configs.beta_2)
 
     model.compile(optimizer=my_optimizer,
-                loss='categorical_crossentropy',
+                loss='binary_crossentropy',
                 metrics=['accuracy'])
     
 
