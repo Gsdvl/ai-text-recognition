@@ -8,3 +8,8 @@ requests
 scikit-learn
 spacy
 gradio
+tensorflow
+argparse
+transformers
+torch
+seaborn
