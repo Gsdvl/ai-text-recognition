@@ -2,6 +2,8 @@ gdown
 numpy
 pandas
 matplotlib
+seaborn
+plotly
 wandb
 kaggle
 requests
@@ -12,4 +14,3 @@ tensorflow
 argparse
 transformers
 torch
-seaborn

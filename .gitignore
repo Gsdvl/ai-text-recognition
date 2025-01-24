@@ -4,3 +4,4 @@ data/processed/*.*
 notebooks/wandb/
 notebooks/__pycache__
 venv/
+wandb/

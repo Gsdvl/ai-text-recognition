@@ -1,19 +1,25 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.layers import Dense
 from tensorflow.keras import optimizers
 from sklearn.model_selection import train_test_split
+import joblib
 from types import SimpleNamespace
 import argparse, os
-import numpy as np
 import pandas as pd
 import wandb
+
 import params
 
 
 def get_data():
-    #TODO CRIAR A FUNÇÃO QUE BAIXA OS DADOS DO WANDB
-    data = pd.read_csv('../results/balanced.csv')
+    root = 'data/preprocessed/balanced.csv'
+
+    if not os.path.exists(root):
+        artifact = wandb.use_artifact('pedro_miguel-universidade-federal-do-rio-grande-do-norte/llm-detect/balanced_data:v0', type='dataset')
+        artifact.download(root=root)
+    data = pd.read_csv(root)
+
     return data
 
 def vectorize_data(data):
@@ -47,7 +53,7 @@ def train_model():
     model = create_model()
 
     model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=model_configs.epochs, batch_size=model_configs.batch_size)
-    #model.save('../results/model.keras')
+    joblib.dump(model, 'models/model_by_script.pkl')
 
 model_configs = SimpleNamespace(
     lr=0.001,
@@ -79,8 +85,8 @@ def parse_args():
 
 if __name__ == "__main__":
     parse_args()
-    run = wandb.init(project=params.WANDB_PROJECT, entity=params.ENTITY, job_type="training")
+    run = wandb.init(project=params.WANDB_PROJECT, job_type="training")
     train_model()
-    run.link_model(path="model.keras", registered_model_name="#ESCOLHER NOME#")
+    run.link_model(path="models/model_by_script.pkl", registered_model_name="model_by_script")
     run.finish()
     wandb.finish()
