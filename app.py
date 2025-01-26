@@ -3,10 +3,11 @@ import gradio as gr
 from predict import predict
 
 def classify_text(prompt):
+    if not prompt:
+        return "Você deve escrever um texto\n"
     try:
-        prediction = predict([prompt])[0]
+        prediction = predict(prompt)
 
-        # Ajustar para formato do output do modelo
         result = f"Classificação: {'Escrita por LLM' if prediction == 1 else 'Escrita por Humano'}\n"
         return result
     except Exception as e:
